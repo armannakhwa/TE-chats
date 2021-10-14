@@ -10,20 +10,28 @@
     <!-- <script src="http://localhost:30/socket.io/socket.io.js"></script> -->
 
     <style>
-        html,
-        body {
+        html,body {
+            height: 100%;
+            width: 100%;
             padding: 0px;
             margin: 0px;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(to left, red, yellow);
+        }
+
+        body{
+            background: linear-gradient(to left, rgb(135, 161, 179), rgb(231, 231, 121));
             overflow: hidden;
         }
 
+        .main{
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+
+        }
+
         .container {
-            background-color: rgb(157, 207, 157);
-            width: 50%;
-            height: 60vh;
+            width: 98%;
+            height: 80%;
             overflow: auto;
             margin: auto;
         }
@@ -32,21 +40,7 @@
             background-color: aqua;
             margin-top: 10px;
         }
-
-
-        #center{
-            position: relative;
-            width: 100vw;
-            background: #fff;
-
-        }
-        .controls {
-            position:absolute;
-           bottom: 0px;
-         
-        }
-
-
+    
         #msginput {
             outline: none;
             min-height: 50px;
@@ -80,21 +74,20 @@
         h2 {
             text-align: center;
         }
-
-        @media only screen and (max-width: 600px) {
-            .container {
-                width: 80%;
-                height: 40vh;
-
-            }
-        }
+nav{
+    background-color: #165e54;
+    padding: 12px;
+    color: white;
+    font-weight: bold;
+    font-size: large;
+}
     </style>
 </head>
 
 <body>
-
+<div class="main">
    
-    <h2>Te IT Group Chats</h2>
+    <nav>Te IT Group Chats</nav>
 
         <div class="container" id="container">
             <div class="new-msg right">Arman:Hiii</div>
@@ -108,7 +101,7 @@
                 </form>
             </center>
         </div>   
-   
+    </div>
     <script>
 
         //var socket = io('http://localhost:30', { transports: ['websocket'] });
