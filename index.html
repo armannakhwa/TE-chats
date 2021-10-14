@@ -94,7 +94,7 @@
     <div class="controls">
         <center>
             <form id="form">
-                <input type="text" placeholder="type msg here" id="msginput">
+                <input type="text" placeholder="type msg here" id="msginput" required>
                 <input type="submit" id="send" value="Send">
             </form>
         </center>
@@ -109,8 +109,8 @@
         let container = document.getElementById("container");
         let msgs = document.getElementById("msg");
 
-        let recieve = new Audio("./recieve.mp3");
-        let send = new Audio("./send.mp3");
+        let recieve = new Audio("recieve.mp3");
+        let send = new Audio("send.mp3");
 
         const addmsgs = (msg, p) => {
             let msgdiv = document.createElement("div");
