@@ -12,6 +12,7 @@
     <style>
         html,
         body {
+            position:relative;
             padding: 0px;
             margin: 0px;
             width: 100%;
@@ -23,11 +24,10 @@
         .container {
             background-color: rgb(157, 207, 157);
             width: 50%;
-            height: 70vh;
+            max-height: 60vh;
             overflow: auto;
             margin: auto;
         }
-
         .new-msg {
             padding: 12px;
             background-color: aqua;
@@ -35,11 +35,16 @@
         }
 
 
-        .controls {
-            position:fixed;
-            bottom: 0px;
+        #center{
+            position: relative;
+            width: 100vw;
             background: #fff;
-            width: 100%;
+
+        }
+        .controls {
+            position:absolute;
+           bottom: 0px;
+         
         }
 
 
@@ -89,20 +94,20 @@
 <body>
     <h2>Te IT Group Chats</h2>
 
-    <div class="main">
+   
         <div class="container" id="container">
             <div class="new-msg right">Arman:Hiii</div>
         </div>
 
         <div class="controls">
-            <center>
-                <form id="form">
+            <center id="center">
+                <form id="form" autocomplete="off">
                     <input type="text" placeholder="type msg here" id="msginput" required>
                     <input type="submit" id="send" value="Send">
                 </form>
             </center>
         </div>
-    </div>
+   
     <script>
 
         //var socket = io('http://localhost:30', { transports: ['websocket'] });
