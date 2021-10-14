@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script src="http://localhost:30/socket.io/socket.io.js"></script> -->
+
+    <style>
+        html,
+        body {
+            padding: 0px;
+            margin: 0px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(to left, red, yellow)
+        }
+
+        .container {
+            background-color: rgb(157, 207, 157);
+            width: 50%;
+            height: 70vh;
+            overflow: auto;
+            margin: auto;
+        }
+
+        .new-msg {
+            padding: 12px;
+            background-color: aqua;
+            margin-top: 10px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 0px;
+            background: #fff;
+            width: 100%;
+        }
+
+
+        #msginput {
+            outline: none;
+            min-height: 50px;
+            border-radius: 22px;
+            max-height: 100px;
+            width: 60%;
+        }
+
+        #send {
+            padding: 12px;
+            background-color: green;
+            border: none;
+            color: white;
+            margin: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .right {
+            float: right;
+            clear: both;
+        }
+
+        .left {
+            float: left;
+            clear: both;
+
+
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 80%;
+
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Te IT Group Chats</h2>
+    <div class="container" id="container">
+        <div class="new-msg right">Arman:Hiii</div>
+    </div>
+
+    <div class="controls">
+        <center>
+            <form id="form">
+                <input type="text" placeholder="type msg here" id="msginput">
+                <input type="submit" id="send" value="Send">
+            </form>
+        </center>
+    </div>
+
+    <script>
+
+       //var socket = io('http://localhost:30', { transports: ['websocket'] });
+        var socket = io();
+
+        let name = prompt("Enter your name");
+        let container = document.getElementById("container");
+        let msgs = document.getElementById("msg");
+
+        let recieve = new Audio("./recieve.mp3");
+        let send = new Audio("./send.mp3");
+
+        const addmsgs = (msg, p) => {
+            let msgdiv = document.createElement("div");
+            msgdiv.innerText = msg;
+            msgdiv.classList.add("new-msg")
+            msgdiv.classList.add(p);
+            container.appendChild(msgdiv);
+
+
+        }
+
+        socket.emit('users', name);
+        socket.on("user", name => {
+            console.log(name);
+            addmsgs(`${name}:has joined the chat`, 'left')
+        })
+
+        socket.on("leave", name => {
+            console.log(name);
+            addmsgs(`${name}:has left the chat`, 'left')
+        })
+
+
+        document.addEventListener("submit", (e) => {
+            e.preventDefault();
+            let msg = document.getElementById("msginput").value;
+
+            addmsgs(`${name}: ${msg}`, 'right')
+
+            socket.emit('new-msg', { msg, name });
+            document.getElementById('container').scrollTop = document.getElementById('container').scrollHeight;
+            send.play();
+            document.getElementById("msginput").value = '';
+
+
+        })
+
+        socket.on("msgs", data => {
+            console.log(data);
+            addmsgs(`${data.name}: ${data.msg}`, 'left');
+            document.getElementById('container').scrollTop = document.getElementById('container').scrollHeight + 100;
+            recieve.play();
+        })
+    </script>
+</body>
+
+</html>
