@@ -10,19 +10,20 @@
     <!-- <script src="http://localhost:30/socket.io/socket.io.js"></script> -->
 
     <style>
-        html,body {
+        html,
+        body {
             height: 100%;
             width: 100%;
             padding: 0px;
             margin: 0px;
         }
 
-        body{
+        body {
             background: linear-gradient(to left, rgb(135, 161, 179), rgb(231, 231, 121));
             overflow: hidden;
         }
 
-        .main{
+        .main {
             height: 100%;
             width: 100%;
             overflow: hidden;
@@ -35,12 +36,13 @@
             overflow: auto;
             margin: auto;
         }
+
         .new-msg {
             padding: 12px;
             background-color: aqua;
             margin-top: 10px;
         }
-    
+
         #msginput {
             outline: none;
             min-height: 50px;
@@ -59,6 +61,16 @@
             cursor: pointer;
         }
 
+        #btn-primary {
+            padding: 6px;
+            background-color: rgb(113, 161, 206);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            float: right;
+        }
+
         .right {
             float: right;
             clear: both;
@@ -74,20 +86,23 @@
         h2 {
             text-align: center;
         }
-nav{
-    background-color: #165e54;
-    padding: 12px;
-    color: white;
-    font-weight: bold;
-    font-size: large;
-}
+
+        nav {
+            background-color: #165e54;
+            padding: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: large;
+        }
     </style>
 </head>
 
 <body>
-<div class="main">
-   
-    <nav>Te IT Group Chats</nav>
+    <div class="main">
+
+        <nav>Te IT Group Chats
+            <button id="btn-primary" onclick="checkonlineusers()">View Online users</button>
+        </nav>
 
         <div class="container" id="container">
             <div class="new-msg right">Arman:Hiii</div>
@@ -100,7 +115,7 @@ nav{
                     <input type="submit" id="send" value="Send">
                 </form>
             </center>
-        </div>   
+        </div>
     </div>
     <script>
 
@@ -108,54 +123,85 @@ nav{
         var socket = io();
 
         let name = prompt("Enter your name");
-        let container = document.getElementById("container");
-        let msgs = document.getElementById("msg");
 
-        let recieve = new Audio("recieve.mp3");
-        let send = new Audio("send.mp3");
+        if (!name) {
+            alert("please enter your name");
+            window.location.href = "./";
+        }
+        else {
+            let container = document.getElementById("container");
+            let msgs = document.getElementById("msg");
 
-        const addmsgs = (msg, p) => {
-            let msgdiv = document.createElement("div");
-            msgdiv.innerText = msg;
-            msgdiv.classList.add("new-msg")
-            msgdiv.classList.add(p);
-            container.appendChild(msgdiv);
+            let recieve = new Audio("recieve.mp3");
+            let send = new Audio("send.mp3");
 
+
+
+            const addmsgs = (msg, p) => {
+                let msgdiv = document.createElement("div");
+                msgdiv.innerText = msg;
+                msgdiv.classList.add("new-msg")
+                msgdiv.classList.add(p);
+                container.appendChild(msgdiv);
+
+
+            }
+
+            socket.emit('users', name);
+            socket.on("user", name => {
+                console.log(name);
+                addmsgs(`${name}:has joined the chat`, 'left')
+            })
+
+            socket.on("leave", name => {
+                console.log(name);
+                addmsgs(`${name}:has left the chat`, 'left')
+            })
+
+
+            document.addEventListener("submit", (e) => {
+                e.preventDefault();
+                let msg = document.getElementById("msginput").value;
+
+                addmsgs(`${name}: ${msg}`, 'right')
+
+                socket.emit('new-msg', { msg, name });
+                document.getElementById('container').scrollTop = document.getElementById('container').scrollHeight;
+                send.play();
+                document.getElementById("msginput").value = '';
+
+
+            })
+
+            socket.on("msgs", data => {
+                console.log(data);
+                addmsgs(`${data.name}: ${data.msg}`, 'left');
+                document.getElementById('container').scrollTop = document.getElementById('container').scrollHeight + 100;
+                recieve.play();
+            })
+
+
+            let allusers;
+            socket.on("allusers", users => {
+                allusers = users;
+            })
+
+
+
+            function checkonlineusers() {
+                let users = '';
+                for (var key in allusers) {
+                    users += allusers[key] + "\n";
+                }
+
+                if (users !== '') {
+                    alert(users)
+                }
+            }
 
         }
 
-        socket.emit('users', name);
-        socket.on("user", name => {
-            console.log(name);
-            addmsgs(`${name}:has joined the chat`, 'left')
-        })
 
-        socket.on("leave", name => {
-            console.log(name);
-            addmsgs(`${name}:has left the chat`, 'left')
-        })
-
-
-        document.addEventListener("submit", (e) => {
-            e.preventDefault();
-            let msg = document.getElementById("msginput").value;
-
-            addmsgs(`${name}: ${msg}`, 'right')
-
-            socket.emit('new-msg', { msg, name });
-            document.getElementById('container').scrollTop = document.getElementById('container').scrollHeight;
-            send.play();
-            document.getElementById("msginput").value = '';
-
-
-        })
-
-        socket.on("msgs", data => {
-            console.log(data);
-            addmsgs(`${data.name}: ${data.msg}`, 'left');
-            document.getElementById('container').scrollTop = document.getElementById('container').scrollHeight + 100;
-            recieve.play();
-        })
     </script>
 </body>
 
